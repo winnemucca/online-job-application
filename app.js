@@ -7,10 +7,10 @@ mongoose.connect('mongodb://localhost/hireMe');
 var Applicant = mongoose.model('Applicant',{
 	name:String,
 	bio: String,
-	skills: String,
+	skills: [String],
 	years: Number,
 	why: String
-	});
+});
 
 var app = express();
 app.set('view engine', 'jade');
@@ -44,7 +44,7 @@ app.get('/applicants', function(req, res){
 // app.get('/application-viewer', function(req, res) {
 
 // 	Applicant.find(function(err,applicants) {
-// 		console.log('applicants line28',applicants);
+		// console.log('applicants line28',applicants);
 // 		if(err) {
 // 			console.log('cannot find applicants');
 // 		}
@@ -60,15 +60,15 @@ app.get('/applicants', function(req, res){
 // });
 
 
-app.get('/:_id',function(req, res) {
-	Applicant.find({_id: req.params.id},function(err,applicant) {
+app.get('/view/:_id',function(req, res) {
+	Applicant.findById(req.params.id,function(err,applicant) {
 		if(err){
 			console.log('cannot find applicants');
 		}
 		else {
 			console.log('applicants id',applicant);
 			res.render('application-viewer', {
-				theApplicant: applicant[0]
+				theApplicant: applicant
 			})
 		}
 	})
@@ -97,22 +97,22 @@ app.post('/applicant', function(req, res){
 	newApplicant.save(function(err,newApplicant){
 		console.log('err',err);
 		console.log('newApplicant',newApplicant);
+		res.redirect('/applicants');
 	});
 	
-		res.redirect('/applicants');
 });
 
 app.post('/delete',function(req,res) {
 	console.log('delete post',req.body) 
-		Applicant.remove({_id: req.body._id},function(err,applicant) {
-			if(err) {
-				console.log('error');
-			}
-			else {
-				return console.log('user deleted',applicant);
-			}
-		})
-		res.redirect('/applicants');
+	Applicant.remove({_id: req.body._id},function(err,applicant) {
+		if(err) {
+			console.log('error',err);
+		}
+		else {
+			return console.log('user deleted',applicant);
+		}
+	})
+	res.redirect('/applicants');
 })
 
 var server = app.listen(8441, function() {

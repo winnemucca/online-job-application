@@ -6,11 +6,11 @@ block content
 		ul#applications.list-unstyled
 		for applicant in applicants 
 			li: a(href="/#{applicant._id}") #{applicant.name.toUpperCase()}
-			li #{applicant.bio}
+			li= applicant.bio
 			li #{applicant.skills}
 			li #{applicant.years}
 			li #{applicant.why}
-			//- button(class='delete-applicant', data-id="#{}") Delete 
+			//- a(href="/delete/#{applicant._id}") Delete 
 			form(method="post" action="/delete")
-				input(type='text' name="_id" value="#{applicant._id}" hidden="true")
-				input(type='submit', value="delete")
+				input(type='hidden' name="_id" value="#{applicant._id}")
+				input(type='submit' value="delete")
